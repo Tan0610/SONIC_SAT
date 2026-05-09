@@ -1,52 +1,79 @@
 const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
 
 async function main() {
-  console.log("Deploying SonicIPToken contract...");
+  const { ethers, network } = hre;
 
-  // Deploy the contract
-  const SonicIPToken = await hre.ethers.deployContract("SonicIPToken");
-  await SonicIPToken.waitForDeployment();
+  const [deployer] = await ethers.getSigners();
+  console.log(`Deploying with account: ${deployer.address}`);
+  const balance = await ethers.provider.getBalance(deployer.address);
+  console.log(`Account balance: ${ethers.formatEther(balance)} ETH`);
 
-  const address = await SonicIPToken.getAddress();
-  console.log(`SonicIPToken deployed to: ${address}`);
+  // -- Deploy SonicVoiceNFT --
+  console.log("\nDeploying SonicVoiceNFT...");
+  const NFT = await ethers.getContractFactory("SonicVoiceNFT");
+  const nft = await NFT.deploy(deployer.address);
+  await nft.waitForDeployment();
+  const nftAddress = nft.target;
+  const nftDeployTx = nft.deploymentTransaction();
+  const nftReceipt = await nftDeployTx.wait();
+  const nftDeployBlock = nftReceipt.blockNumber;
+  console.log(`SonicVoiceNFT deployed to: ${nftAddress} (block ${nftDeployBlock})`);
 
-  console.log("Waiting for confirmations...");
-  // Wait for confirmations to ensure contract is deployed
-  // Only for testnet/mainnet, not needed for local networks
-  if (network.name !== "hardhat" && network.name !== "localhost") {
-    await SonicIPToken.deploymentTransaction().wait(5); // Wait for 5 confirmations
-    console.log("Confirmed. Contract deployed successfully!");
-    
-    // Verify on block explorer (e.g. Etherscan) if not on a local network
-    try {
-      console.log("Verifying contract on block explorer...");
-      await hre.run("verify:verify", {
-        address: address,
-        constructorArguments: [],
-      });
-      console.log("Contract verified successfully!");
-    } catch (error) {
-      console.error("Error verifying contract:", error.message);
-    }
+  // -- Deploy SonicVoiceMarketplace --
+  console.log("\nDeploying SonicVoiceMarketplace...");
+  const Marketplace = await ethers.getContractFactory("SonicVoiceMarketplace");
+  const marketplace = await Marketplace.deploy(nftAddress);
+  await marketplace.waitForDeployment();
+  const marketplaceAddress = marketplace.target;
+  const marketplaceDeployTx = marketplace.deploymentTransaction();
+  const marketplaceReceipt = await marketplaceDeployTx.wait();
+  const marketplaceDeployBlock = marketplaceReceipt.blockNumber;
+  console.log(
+    `SonicVoiceMarketplace deployed to: ${marketplaceAddress} (block ${marketplaceDeployBlock})`
+  );
+
+  const deployBlock = Math.min(nftDeployBlock, marketplaceDeployBlock);
+
+  // -- Resolve chainId --
+  let chainId = 314159;
+  try {
+    const net = await ethers.provider.getNetwork();
+    chainId = Number(net.chainId);
+  } catch (_) {
+    // fall back to default
   }
 
-  // Save the contract address to a file for easy reference
-  const fs = require("fs");
-  fs.writeFileSync(
-    "contract-address.json",
-    JSON.stringify({ SonicIPToken: address }, null, 2)
-  );
-  console.log("Contract address saved to contract-address.json");
+  // -- Persist deployments/calibration.json --
+  const deploymentsDir = path.join(__dirname, "..", "deployments");
+  if (!fs.existsSync(deploymentsDir)) {
+    fs.mkdirSync(deploymentsDir, { recursive: true });
+  }
+  const outFile = path.join(deploymentsDir, "calibration.json");
+  const record = {
+    nftAddress,
+    marketplaceAddress,
+    chainId,
+    deployBlock,
+    deployedAt: new Date().toISOString(),
+    deployer: deployer.address,
+  };
+  fs.writeFileSync(outFile, JSON.stringify(record, null, 2));
+  console.log(`\nWrote ${outFile}`);
 
-  return address;
+  console.log("\n=====================================================");
+  console.log("SUCCESS - Paste these into .env.local:");
+  console.log("=====================================================");
+  console.log(`NEXT_PUBLIC_NFT_ADDRESS=${nftAddress}`);
+  console.log(`NEXT_PUBLIC_MARKETPLACE_ADDRESS=${marketplaceAddress}`);
+  console.log(`NEXT_PUBLIC_DEPLOY_BLOCK=${deployBlock}`);
+  console.log(`NEXT_PUBLIC_CHAIN_ID=${chainId}`);
+  console.log("=====================================================");
 }
 
-// Execute deployment
 main()
-  .then((address) => {
-    console.log("Deployment completed successfully!");
-    process.exit(0);
-  })
+  .then(() => process.exit(0))
   .catch((error) => {
     console.error("Error during deployment:", error);
     process.exit(1);

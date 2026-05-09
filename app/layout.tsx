@@ -4,7 +4,6 @@ import { Funnel_Display, Funnel_Sans } from "next/font/google";
 import "./globals.css";
 import { ContextProvider } from ".";
 import ReactQueryProvider from "./ReactQueryProvider";
-import { IPProvider } from "@/contexts/IPContext";
 import { RoleProvider } from "@/contexts/RoleContext";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
@@ -41,11 +40,7 @@ export default function RootLayout({
       >
         <ReactQueryProvider>
           <ContextProvider>
-            <RoleProvider>
-              <IPProvider>
-                {children}
-              </IPProvider>
-            </RoleProvider>
+            <RoleProvider>{children}</RoleProvider>
           </ContextProvider>
         </ReactQueryProvider>
       </body>

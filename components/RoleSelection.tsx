@@ -22,7 +22,7 @@ export default function RoleSelection() {
           </div>
           <h2 className="text-2xl font-bold text-white mb-4">Choose Your Role</h2>
           <p className="text-gray-400 text-lg">
-            Select how you'd like to use SONIC IP platform
+            Select how you&apos;d like to use SONIC IP platform
           </p>
         </div>
 

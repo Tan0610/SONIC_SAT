@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "compile": "hardhat compile",
+    "test:contracts": "hardhat test",
+    "deploy:calibration": "hardhat run scripts/deploy.js --network filecoinCalibration",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@lighthouse-web3/sdk": "^0.4.3",
@@ -24,7 +28,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@openzeppelin/contracts": "^5.4.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19",
@@ -33,7 +37,7 @@
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
-    "hardhat": "^3.0.7",
+    "hardhat": "^2.28.6",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

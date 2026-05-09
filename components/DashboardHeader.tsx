@@ -15,7 +15,7 @@ export default function DashboardHeader() {
     <header className="h-16 bg-[var(--card-background)] border-b border-[var(--border-color)] flex items-center justify-between px-6">
       {/* Left side - Seller's Dashboard */}
       <div>
-        <h1 className="text-white font-semibold text-lg">Seller's Dashboard</h1>
+        <h1 className="text-white font-semibold text-lg">Seller&apos;s Dashboard</h1>
       </div>
 
       {/* Right side - Actions */}
