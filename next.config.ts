@@ -1,3 +1,5 @@
+import path from "node:path";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
@@ -6,6 +8,17 @@ const nextConfig = {
   images: {
     remotePatterns: [],
     unoptimized: true,
+  },
+  webpack: (config: any) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      "@react-native-async-storage/async-storage": path.resolve(
+        process.cwd(),
+        "lib",
+        "asyncStorageShim"
+      ),
+    };
+    return config;
   },
 };
 

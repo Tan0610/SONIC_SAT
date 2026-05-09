@@ -2,6 +2,21 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export const WalletConnect = () => {
+    const hasWalletConnectProjectId =
+        (process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? "").length > 0;
+
+    if (!hasWalletConnectProjectId) {
+        return (
+            <button
+                type="button"
+                disabled
+                title="Set NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID in .env.local to enable wallet connections."
+                className="text-white font-medium items-center inline-flex bg-gray-500 border border-gray-500 transition-colors focus:outline-none justify-center text-center px-4 py-2 rounded-lg text-sm opacity-60 cursor-not-allowed"
+            >
+                WalletConnect unavailable
+            </button>
+        );
+    }
 
     return (
         <ConnectButton.Custom>
