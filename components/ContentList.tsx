@@ -17,7 +17,7 @@ interface ContentListProps {
   type: "album" | "single";
 }
 
-export default function ContentList({ title, items, type }: ContentListProps) {
+export default function ContentList({ title, items }: ContentListProps) {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 

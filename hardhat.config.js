@@ -1,5 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config();
+require("dotenv").config({ path: ".env.local" });
 
 // Get private key from environment variables
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
@@ -7,7 +7,16 @@ const API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.20",
+  solidity: {
+    version: "0.8.24",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+      evmVersion: "cancun",
+    },
+  },
   networks: {
     // Configuration for Filecoin Calibration testnet (for testing)
     filecoinCalibration: {
