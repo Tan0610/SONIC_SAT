@@ -115,7 +115,9 @@ export function useActiveListings() {
           setMetadataByURI((prev) => {
             const next = { ...prev };
             for (const entry of entries) {
-              if ("metadata" in entry) next[entry.uri] = entry.metadata;
+              if ("metadata" in entry && entry.metadata !== undefined) {
+                next[entry.uri] = entry.metadata;
+              }
             }
             return next;
           });
