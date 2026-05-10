@@ -18,7 +18,7 @@
     "@tanstack/react-query": "^5.83.0",
     "ethers": "^6.15.0",
     "lucide-react": "^0.479.0",
-    "next": "15.3.0",
+    "next": "15.3.9",
     "pino-pretty": "^11.2.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
